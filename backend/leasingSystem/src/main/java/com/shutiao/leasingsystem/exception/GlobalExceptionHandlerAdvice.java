@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 
-
 @RestControllerAdvice
 public class GlobalExceptionHandlerAdvice {
     Logger log = LoggerFactory.getLogger((GlobalExceptionHandlerAdvice.class));
@@ -17,7 +16,7 @@ public class GlobalExceptionHandlerAdvice {
     @ExceptionHandler({Exception.class})
     public ResponseMessage handlerException(Exception e, HttpServletRequest request, HttpServletResponse response){
         log.error("统一异常", e);
-        return new ResponseMessage(500, "error", null);
+        return new ResponseMessage(500, e.getMessage(), null);
     }
 
 }

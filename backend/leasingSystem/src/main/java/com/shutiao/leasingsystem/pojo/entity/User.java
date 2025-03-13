@@ -75,5 +75,7 @@ public class User {
         this.discount = discount;
     }
 
+    public String getRole() {return role;}
 
+    public void setRole(String role) {this.role = role;}
 }
