@@ -67,4 +67,8 @@ public class ResponseMessage<T> {
     public static <T> ResponseMessage<T> success(T data){
         return new ResponseMessage(HttpStatus.OK.value(), "success", data);
     }
+
+    public static <T> ResponseMessage<T> error(T data) {
+        return new ResponseMessage<>(HttpStatus.BAD_REQUEST.value(), "error", data);
+    }
 }

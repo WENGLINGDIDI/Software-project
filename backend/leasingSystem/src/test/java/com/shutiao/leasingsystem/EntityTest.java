@@ -79,9 +79,9 @@ public class EntityTest {
 
     @Test
     public void generateHireOption() {
-        Integer[] hours = {1, 4, 24};
-        Integer[] money = {10, 30, 100};
-        for (int i = 0; i < 3; i++){
+        Integer[] hours = {1, 4, 24, 168};
+        Integer[] money = {10, 30, 100, 200};
+        for (int i = 0; i < 4; i++){
             HireOption hireOption = new HireOption();
             hireOption.setHours(hours[i]);
             hireOption.setMoney(money[i]);

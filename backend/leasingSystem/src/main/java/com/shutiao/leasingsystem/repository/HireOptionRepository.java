@@ -1,9 +1,9 @@
 package com.shutiao.leasingsystem.repository;
 import com.shutiao.leasingsystem.pojo.entity.HireOption;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface HireOptionRepository  extends CrudRepository<HireOption, Integer> {
+public interface HireOptionRepository  extends JpaRepository<HireOption, Integer> {
 
 }
