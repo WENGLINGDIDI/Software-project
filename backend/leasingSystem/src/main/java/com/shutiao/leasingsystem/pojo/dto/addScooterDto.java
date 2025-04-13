@@ -11,6 +11,16 @@ public class addScooterDto {
     private Integer status;  // 0=可用, 1=不可用, 2=维修中
 
     private Integer power;
+    @NotNull
+    private Integer stationId;
+
+    public Integer getStationId() {
+        return stationId;
+    }
+
+    public void setStationId(Integer stationId) {
+        this.stationId = stationId;
+    }
 
     private String config;  // 额外配置（可选）
 

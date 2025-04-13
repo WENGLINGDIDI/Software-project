@@ -21,9 +21,21 @@ public class Book {
     @JoinColumn(name = "hire_id", nullable = false)  // 外键 hire_id 关联 Hire 表
     private HireOption hireOption;
     private Double totalCost;
-    private String status;
+//  1 预定， 2 激活， 3 完成
+    private Integer status;
+//    0 未付， 1 付款
+    private Integer payed;
     private java.time.LocalDateTime startTime;
     private java.time.LocalDateTime endTime;
+    private Integer extend_time = 0; // 新增属性，默认值为 0
+
+    public Integer getExtend_time() {
+        return extend_time;
+    }
+
+    public void setExtend_time(Integer extend_time) {
+        this.extend_time = extend_time;
+    }
 
     public Integer getId() {
         return id;
@@ -65,12 +77,20 @@ public class Book {
         this.totalCost = totalCost;
     }
 
-    public String getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getPayed() {
+        return payed;
+    }
+
+    public void setPayed(Integer payed) {
+        this.payed = payed;
     }
 
     public LocalDateTime getStartTime() {

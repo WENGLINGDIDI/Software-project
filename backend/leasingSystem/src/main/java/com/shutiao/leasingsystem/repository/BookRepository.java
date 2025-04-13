@@ -13,4 +13,6 @@ public interface BookRepository  extends JpaRepository<Book, Integer> {
     List<Book> findByStartTimeBetween(LocalDateTime startOfWeek, LocalDateTime endOfWeek);
 
     List<Book> findByUserId(Integer userId);
+
+    List<Book> findByPayed(int i);
 }

@@ -1,15 +1,8 @@
 package com.shutiao.leasingsystem.service;
 
-import com.shutiao.leasingsystem.pojo.dto.addScooterDto;
-import com.shutiao.leasingsystem.pojo.dto.editScooterDto;
-import com.shutiao.leasingsystem.pojo.entity.Book;
-import com.shutiao.leasingsystem.pojo.entity.HireOption;
-import com.shutiao.leasingsystem.pojo.entity.Scooter;
-import com.shutiao.leasingsystem.pojo.entity.User;
-import com.shutiao.leasingsystem.repository.BookRepository;
-import com.shutiao.leasingsystem.repository.HireOptionRepository;
-import com.shutiao.leasingsystem.repository.ScooterRepository;
-import com.shutiao.leasingsystem.repository.UserRepository;
+import com.shutiao.leasingsystem.pojo.dto.*;
+import com.shutiao.leasingsystem.pojo.entity.*;
+import com.shutiao.leasingsystem.repository.*;
 import com.shutiao.leasingsystem.service.Interface.IAdminService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,37 +29,7 @@ public class AdminService implements IAdminService {
     @Autowired
     private UserRepository userRepository;
 
-    @Override
-    public Scooter addScooter(addScooterDto scooter) {
-        // 复制 DTO 数据到 scooter 实体
-        Scooter scooterpojo = new Scooter();
-        BeanUtils.copyProperties(scooter, scooterpojo);
-        return scooterRepository.save(scooterpojo);
-    }
-
-    @Override
-    public Scooter editScooter(editScooterDto scooter) {
-        // 1. 查询电动车，找不到就抛异常
-        Scooter existScooter = scooterRepository.findById(scooter.getId())
-                .orElseThrow(() -> new RuntimeException("Scooter not found!"));
-
-        // 2. 更新字段（确保不覆盖非空字段）
-        existScooter.setLatitude(scooter.getLatitude());
-        existScooter.setLongitude(scooter.getLongitude());
-        existScooter.setStatus(scooter.getStatus());
-        existScooter.setPower(scooter.getPower());
-        existScooter.setConfig(scooter.getConfig());  // 可能为空，没关系
-
-        // 3. 保存更新后的实体
-        return scooterRepository.save(existScooter);
-    }
-
-//  获取全部电动车
-    @Override
-    public List<Scooter> getAllScooters() {
-        return (List<Scooter>) scooterRepository.findAll();
-    }
-
+    //获取本周营业额
     @Override
     public Map<Integer, Double> getRevenueForThisWeek() {
         LocalDateTime now = LocalDateTime.now();
@@ -94,24 +57,25 @@ public class AdminService implements IAdminService {
     }
 
     @Override
-    public List<Map<String, Object>> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        List<Map<String, Object>> responseList = new ArrayList<>();
+    public List<User> getAllUsers() {
+        List<User> allUsers = userRepository.findAll();
+        List<User> nonAdminUsers = new ArrayList<>();
 
-        for (User user : users) {
-            // 只处理 role 为 "user" 的用户
-            if ("user".equals(user.getRole())) {
-                Map<String, Object> userMap = new HashMap<>();
-                userMap.put("name", user.getName());
-                userMap.put("email", user.getEmail());
-                userMap.put("discount", user.getDiscount());
-                responseList.add(userMap);
+        for (User user : allUsers) {
+            if (!"admin".equals(user.getRole())) {
+                nonAdminUsers.add(user);
             }
         }
-        return responseList;
+        return nonAdminUsers;
     }
 
-
-    //获取本周营业额
+    @Override
+    public User editDiscountDto(editDiscountDto dto) {
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("用户未找到"));
+        user.setDiscount(dto.getDiscount());
+        user.setDiscountTime(LocalDateTime.now().plusHours(dto.getDiscountHours()));
+        return userRepository.save(user);
+    }
 
 }

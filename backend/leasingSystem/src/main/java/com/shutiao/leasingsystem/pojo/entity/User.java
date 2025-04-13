@@ -18,6 +18,15 @@ public class User {
     private String role = "user";
     private LocalDateTime createTime = LocalDateTime.now();
     private double discount = 1.0;
+    private LocalDateTime discountTime; // 新增属性
+
+    public LocalDateTime getDiscountTime() {
+        return discountTime;
+    }
+
+    public void setDiscountTime(LocalDateTime discountTime) {
+        this.discountTime = discountTime;
+    }
 
     public Integer getId() {
         return id;

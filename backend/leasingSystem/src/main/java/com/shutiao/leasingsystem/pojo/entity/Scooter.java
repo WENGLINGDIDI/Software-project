@@ -15,6 +15,17 @@ public class Scooter {
     private Integer status;  // 状态，例如 0=可用, 1=不可用, 2=维修中
     private Integer power;
     private String config;   // 额外配置（如速度等）
+    @ManyToOne
+    @JoinColumn(name = "station_id")
+    private Station station;
+
+    public Station getStation() {
+        return station;
+    }
+
+    public void setStation(Station station) {
+        this.station = station;
+    }
 
     public Integer getId() {
         return id;

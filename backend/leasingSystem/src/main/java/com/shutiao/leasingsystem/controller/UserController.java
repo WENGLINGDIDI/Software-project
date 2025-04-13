@@ -2,10 +2,8 @@ package com.shutiao.leasingsystem.controller;
 
 
 import com.shutiao.leasingsystem.pojo.ResponseMessage;
-import com.shutiao.leasingsystem.pojo.dto.loginDto;
-import com.shutiao.leasingsystem.pojo.entity.Book;
-import com.shutiao.leasingsystem.pojo.entity.User;
-import com.shutiao.leasingsystem.pojo.dto.addUserDto;
+import com.shutiao.leasingsystem.pojo.dto.*;
+import com.shutiao.leasingsystem.pojo.entity.*;
 import com.shutiao.leasingsystem.service.Interface.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -40,10 +38,9 @@ public class UserController {
         return ResponseMessage.success(user);
     }
 
-    @GetMapping("/book/{userId}")
-    public ResponseMessage<List<Book>> bookById(@PathVariable Integer userId){
-        List<Book> books = userService.bookById(userId);
-        return ResponseMessage.success(books);
+    @PostMapping("/card")
+    public ResponseMessage<User> setUserCard(@RequestBody addUserCardDto dto) {
+        User updatedUser = userService.addUserCard(dto);
+        return ResponseMessage.success(updatedUser);
     }
-
 }

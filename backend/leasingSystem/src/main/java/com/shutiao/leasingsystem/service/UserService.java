@@ -1,16 +1,16 @@
 package com.shutiao.leasingsystem.service;
 
-import com.shutiao.leasingsystem.pojo.dto.loginDto;
-import com.shutiao.leasingsystem.pojo.entity.Book;
-import com.shutiao.leasingsystem.pojo.entity.User;
-import com.shutiao.leasingsystem.pojo.dto.addUserDto;
-import com.shutiao.leasingsystem.repository.BookRepository;
-import com.shutiao.leasingsystem.repository.UserRepository;
+import com.shutiao.leasingsystem.pojo.dto.*;
+import com.shutiao.leasingsystem.pojo.entity.*;
+import com.shutiao.leasingsystem.repository.*;
 import com.shutiao.leasingsystem.service.Interface.IUserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -19,7 +19,14 @@ public class UserService implements IUserService {
     UserRepository userRepository;
     @Autowired
     BookRepository bookRepository;
-
+    @Autowired
+    ScooterRepository scooterRepository;
+    @Autowired
+    HireOptionRepository hireOptionRepository;
+    @Autowired
+    FeedbackRepository feedbackRepository;
+    @Autowired
+    StationRepository stationRepository;
 
     @Override
     public User add(addUserDto user) {
@@ -58,9 +65,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<Book> bookById(Integer userId) {
-        return bookRepository.findByUserId(userId);
+    public User addUserCard(addUserCardDto dto) {
+        User user = userRepository.findById(dto.getId())
+                .orElseThrow(() -> new RuntimeException("用户未找到"));
+        user.setCard(dto.getCard());
+        return userRepository.save(user);
     }
-
 
 }

@@ -1,9 +1,7 @@
 package com.shutiao.leasingsystem.service.Interface;
 
-import com.shutiao.leasingsystem.pojo.dto.loginDto;
-import com.shutiao.leasingsystem.pojo.entity.Book;
-import com.shutiao.leasingsystem.pojo.entity.User;
-import com.shutiao.leasingsystem.pojo.dto.addUserDto;
+import com.shutiao.leasingsystem.pojo.dto.*;
+import com.shutiao.leasingsystem.pojo.entity.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,5 +14,6 @@ public interface IUserService {
 
     User login(loginDto user);
 
-    List<Book> bookById(Integer userId);
+    User addUserCard(addUserCardDto dto);
+
 }

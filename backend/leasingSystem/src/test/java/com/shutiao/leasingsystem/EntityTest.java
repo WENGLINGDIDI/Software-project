@@ -2,13 +2,18 @@ package com.shutiao.leasingsystem;
 
 import com.shutiao.leasingsystem.pojo.entity.*;
 import com.shutiao.leasingsystem.repository.*;
+import com.shutiao.leasingsystem.service.EmailService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -25,7 +30,10 @@ public class EntityTest {
     private BookRepository bookRepository;
     @Autowired
     private FeedbackRepository feedbackRepository;
-
+    @Autowired
+    private JavaMailSender javaMailSender;
+    @Autowired
+    private StationRepository stationRepository;
 //    @BeforeEach
 //    public void setup() {
 //        // 清空数据库中的所有用户
@@ -65,6 +73,9 @@ public class EntityTest {
         double centerLng = 104.065; // 成都天府广场经度
         double radius = 0.02; // 设定一个小范围半径（大约2公里内）
 
+        // 获取所有站点
+        List<Station> stations = stationRepository.findAll();
+
         for (int i = 1; i <= 5; i++) {
             Scooter scooter = new Scooter();
             scooter.setLatitude(centerLat + (random.nextDouble() * radius - radius / 2));
@@ -72,6 +83,14 @@ public class EntityTest {
             scooter.setStatus(0); // 0=可用, 1=不可用, 2=维修中
             scooter.setPower(random.nextInt(101)); // 0~100 随机电量
             scooter.setConfig("Speed: 30 km/h, 包含头盔与手机支架"); // 速度 5~30km/h
+
+            // 随机选择一个站点
+            if (!stations.isEmpty()) {
+                int randomIndex = random.nextInt(stations.size());
+                Station randomStation = stations.get(randomIndex);
+                scooter.setStation(randomStation);
+            }
+
             scooterRepository.save(scooter);
         }
     }
@@ -121,7 +140,7 @@ public class EntityTest {
             double totalCost = hireOption.getMoney() * user.getDiscount();
             book.setTotalCost(totalCost);
             // 设置订单状态，示例中统一设置为 "active"
-            book.setStatus("active");
+            book.setStatus(1);
 
             // 保存订单
             bookRepository.save(book);
@@ -145,5 +164,44 @@ public class EntityTest {
         // 保存反馈记录到数据库
         feedbackRepository.save(feedback);
     }
+    @Test
+    public void timeTest(){
+        LocalDateTime now = LocalDateTime.now();
+        // 定义日期时间的格式化模式
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
 
+        // 格式化日期时间并打印
+        String formattedDateTime = now.format(formatter);
+        System.out.println(now);
+        System.out.println("当前日期时间: " + formattedDateTime);
+    }
+    @Test
+    public void emailTest(){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo("1550320492@qq.com");
+        message.setSubject("test");
+        message.setText("hello");
+        message.setFrom("1550320492@qq.com");
+        javaMailSender.send(message);
+        System.out.println("发送邮件");
+    }
+    @Test
+    public void generatePresetStations() {
+        // 预设四个成都市区街道站点
+        String[] streetNames = {"春熙路街道", "书院街街道", "双水碾街道", "玉林街道"};
+        double[][] coordinates = {
+                {30.6586, 104.0757}, // 春熙路街道大致经纬度
+                {30.6678, 104.0873}, // 书院街街道大致经纬度
+                {30.7048, 104.0731}, // 双水碾街道大致经纬度
+                {30.6383, 104.0526}  // 玉林街道大致经纬度
+        };
+
+        for (int i = 0; i < streetNames.length; i++) {
+            Station station = new Station();
+            station.setName(streetNames[i]);
+            station.setLatitude(coordinates[i][0]);
+            station.setLongitude(coordinates[i][1]);
+            stationRepository.save(station);
+        }
+    }
 }

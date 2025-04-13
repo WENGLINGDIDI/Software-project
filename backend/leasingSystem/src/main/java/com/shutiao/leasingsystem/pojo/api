@@ -1,0 +1,33 @@
+接口：编辑电动车
+
+Path：/admin/scooter/edit
+
+Method：POST
+
+请求参数 body：
+```
+{
+    "id":12,
+    "latitude":30.656182541698344,
+    "longitude":104.06927120531933,
+    "status":2,
+    "power":80,
+    "config":"speed:30km/h"
+}
+```
+
+返回参数：
+```
+{
+    "statusCode": 200,
+    "message": "success",
+    "data": {
+        "id": 12,
+        "latitude": 30.656182541698342,
+        "longitude": 104.06927120531932,
+        "status": 2,
+        "power": 80,
+        "config": "speed:30km/h"
+    }
+}
+```

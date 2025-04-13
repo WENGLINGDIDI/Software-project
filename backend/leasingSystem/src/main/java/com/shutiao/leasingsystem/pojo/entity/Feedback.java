@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
+import java.time.LocalDateTime;
+
 @Table(name="Feedback")
 @Entity
 public class Feedback {
@@ -18,6 +20,8 @@ public class Feedback {
     private Integer priority;
     private String message;  // 反馈内容
     private String status;
+    private java.time.LocalDateTime createTime;
+    private String result;  // 处理结果
 
     public Integer getId() {
         return id;
@@ -57,5 +61,21 @@ public class Feedback {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
     }
 }

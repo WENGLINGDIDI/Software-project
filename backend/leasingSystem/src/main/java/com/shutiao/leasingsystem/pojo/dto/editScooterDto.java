@@ -1,5 +1,7 @@
 package com.shutiao.leasingsystem.pojo.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class editScooterDto {
     private Integer id;
     private Double latitude;
@@ -7,6 +9,16 @@ public class editScooterDto {
     private Integer status;  // 0=可用, 1=不可用, 2=维修中
     private Integer power;
     private String config;  // 额外配置（可选）
+    @NotNull
+    private Integer stationId;
+
+    public Integer getStationId() {
+        return stationId;
+    }
+
+    public void setStationId(Integer stationId) {
+        this.stationId = stationId;
+    }
 
     public Integer getId() {
         return id;
