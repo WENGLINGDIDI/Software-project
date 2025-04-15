@@ -13,4 +13,6 @@ public interface IBookService {
     Book cancelBook(Integer bookId);
     Book extendBookTime(extendBookTimeDto dto);
     Book completeBook(completeBookDto dto);
+
+    List<Book> getAllBook();
 }

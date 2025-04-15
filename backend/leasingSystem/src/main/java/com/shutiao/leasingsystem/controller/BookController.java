@@ -51,4 +51,11 @@ public class BookController {
         Book completedBook = bookService.completeBook(dto);
         return ResponseMessage.success(completedBook);
     }
+
+    // 延长订单
+    @GetMapping("/admin/book/all")
+    public ResponseMessage<List<Book>> getAllBook() {
+        List<Book> allBooks = bookService.getAllBook();
+        return ResponseMessage.success(allBooks);
+    }
 }

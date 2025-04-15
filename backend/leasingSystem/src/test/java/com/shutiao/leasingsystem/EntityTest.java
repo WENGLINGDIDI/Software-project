@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -34,6 +35,7 @@ public class EntityTest {
     private JavaMailSender javaMailSender;
     @Autowired
     private StationRepository stationRepository;
+
 //    @BeforeEach
 //    public void setup() {
 //        // 清空数据库中的所有用户
@@ -147,7 +149,6 @@ public class EntityTest {
         }
     }
 
-
     @Test
     public void generateTestFeedback() {
         // 从 Book 表中获取一条记录（这里假设ID为1的记录存在）
@@ -164,6 +165,7 @@ public class EntityTest {
         // 保存反馈记录到数据库
         feedbackRepository.save(feedback);
     }
+
     @Test
     public void timeTest(){
         LocalDateTime now = LocalDateTime.now();
@@ -175,6 +177,7 @@ public class EntityTest {
         System.out.println(now);
         System.out.println("当前日期时间: " + formattedDateTime);
     }
+
     @Test
     public void emailTest(){
         SimpleMailMessage message = new SimpleMailMessage();
@@ -185,6 +188,7 @@ public class EntityTest {
         javaMailSender.send(message);
         System.out.println("发送邮件");
     }
+
     @Test
     public void generatePresetStations() {
         // 预设四个成都市区街道站点
@@ -202,6 +206,30 @@ public class EntityTest {
             station.setLatitude(coordinates[i][0]);
             station.setLongitude(coordinates[i][1]);
             stationRepository.save(station);
+        }
+    }
+
+    @Test
+    public void encryptUserPasswords() {
+        // 创建 BCrypt 密码编码器
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        // 获取所有用户
+        List<User> allUsers = userRepository.findAll();
+
+        // 遍历所有用户
+        for (User user : allUsers) {
+            // 获取用户的原始密码
+            String originalPassword = user.getPassword();
+
+            // 对密码进行加密
+            String encryptedPassword = passwordEncoder.encode(originalPassword);
+
+            // 设置加密后的密码
+            user.setPassword(encryptedPassword);
+
+            // 保存更新后的用户信息
+            userRepository.save(user);
         }
     }
 }

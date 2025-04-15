@@ -142,6 +142,11 @@ public class BookService implements IBookService {
         return bookRepository.save(book);
     }
 
+    @Override
+    public List<Book> getAllBook() {
+        return bookRepository.findAll();
+    }
+
     @Scheduled(fixedRate = 600000) // 每分钟执行一次，可以根据需要调整
     public void updateUnpaidBookStatus() {
         List<Book> unpaidBooks = bookRepository.findByPayed(0); // 获取所有未支付的订单
