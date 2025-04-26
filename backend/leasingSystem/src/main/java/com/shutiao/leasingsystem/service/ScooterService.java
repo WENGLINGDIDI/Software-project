@@ -54,4 +54,14 @@ public class ScooterService implements IScooterService {
     public List<Scooter> getAllScooters() {
         return (List<Scooter>) scooterRepository.findAll();
     }
+
+    @Override
+    public Scooter deleteScooter(Integer id) {
+        Scooter scooterToDelete = scooterRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Scooter not found!"));
+        scooterRepository.deleteById(id);
+        return scooterToDelete;
+    }
+
+
 }

@@ -33,4 +33,10 @@ public class ScooterController {
         List<Scooter> scooters = scooterService.getAllScooters();
         return ResponseMessage.success(scooters);
     }
+
+    @DeleteMapping("/scooter/delete/{id}")
+    public ResponseMessage<Scooter> deleteScooter(@PathVariable Integer id) {
+        Scooter deletedScooter = scooterService.deleteScooter(id);
+        return ResponseMessage.success(deletedScooter);
+    }
 }

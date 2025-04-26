@@ -32,4 +32,13 @@ public class HireOption {
     public void setMoney(Integer money) {
         this.money = money;
     }
+
+    @Override
+    public String toString() {
+        return "HireOption{" +
+                "id=" + id +
+                ", hours=" + hours +
+                ", money=" + money +
+                '}';
+    }
 }

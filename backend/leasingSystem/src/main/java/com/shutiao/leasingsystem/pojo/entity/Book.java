@@ -108,4 +108,20 @@ public class Book {
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", user=" + user +
+                ", scooter=" + scooter +
+                ", hireOption=" + hireOption +
+                ", totalCost=" + totalCost +
+                ", status=" + status +
+                ", payed=" + payed +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", extend_time=" + extend_time +
+                '}';
+    }
 }

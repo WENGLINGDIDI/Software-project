@@ -74,4 +74,17 @@ public class Scooter {
     public void setConfig(String config) {
         this.config = config;
     }
+
+    @Override
+    public String toString() {
+        return "Scooter{" +
+                "id=" + id +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", status=" + status +
+                ", power=" + power +
+                ", config='" + config + '\'' +
+                ", station=" + station +
+                '}';
+    }
 }

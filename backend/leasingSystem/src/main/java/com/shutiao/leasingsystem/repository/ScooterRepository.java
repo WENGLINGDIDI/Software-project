@@ -10,4 +10,6 @@ import java.util.List;
 public interface ScooterRepository  extends JpaRepository<Scooter, Integer> {
     // 根据站点 ID 和状态（0 表示可用）查询空闲电动车
     List<Scooter> findByStationIdAndStatus(Integer stationId, Integer status);
+
+    List<Scooter> findByStationId(Integer stationId);
 }

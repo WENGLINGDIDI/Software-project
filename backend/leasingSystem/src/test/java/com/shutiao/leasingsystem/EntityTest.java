@@ -3,12 +3,15 @@ package com.shutiao.leasingsystem;
 import com.shutiao.leasingsystem.pojo.entity.*;
 import com.shutiao.leasingsystem.repository.*;
 import com.shutiao.leasingsystem.service.EmailService;
+import com.shutiao.leasingsystem.pojo.dto.*;
+import com.shutiao.leasingsystem.service.Interface.IBookService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,6 +20,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 public class EntityTest {
@@ -35,6 +39,8 @@ public class EntityTest {
     private JavaMailSender javaMailSender;
     @Autowired
     private StationRepository stationRepository;
+    @Autowired
+    private IBookService bookService;
 
 //    @BeforeEach
 //    public void setup() {
@@ -208,6 +214,66 @@ public class EntityTest {
             stationRepository.save(station);
         }
     }
+
+
+    @Test
+    public void changeUserPassword() {
+        // 获取密码编码器
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        // 查找 id 为 10 的用户
+        User user = userRepository.findById(10).orElseThrow(() ->
+                new RuntimeException("用户不存在，id: 10")
+        );
+
+        // 设置新密码并加密
+        String newPassword = "123456";
+        String encryptedPassword = passwordEncoder.encode(newPassword);
+        user.setPassword(encryptedPassword);
+
+        // 保存更新后的用户信息
+        userRepository.save(user);
+    }
+
+    @Test
+    public void testUserWithId10PlaceOrder() {
+        // 获取 id 为 10 的用户
+        User user = userRepository.findById(10)
+                .orElseThrow(() -> new RuntimeException("User not found with id: 10"));
+
+        // 获取一个可用的滑板车
+        Scooter scooter = scooterRepository.findAll().stream()
+                .filter(s -> s.getStatus() == 0)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No available scooter found"));
+
+        // 获取一个租用选项
+        HireOption hireOption = hireOptionRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No hire option found"));
+
+        // 设置订单的开始和结束时间
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        LocalDateTime startTime = LocalDateTime.now();
+        LocalDateTime endTime = startTime.plusHours(hireOption.getHours());
+        String startTimeStr = startTime.format(formatter);
+        String endTimeStr = endTime.format(formatter);
+
+        // 创建 addBookDto 对象
+        addBookDto bookDto = new addBookDto();
+        bookDto.setUserId(user.getId());
+        bookDto.setScooterId(scooter.getId());
+        bookDto.setHireOptionId(hireOption.getId());
+        bookDto.setStartTime(startTimeStr);
+        bookDto.setEndTime(endTimeStr);
+
+        // 调用服务层的方法下订单
+        Book newBook = bookService.addBook(bookDto);
+
+        // 验证订单是否成功创建
+        assertNotNull(newBook.getId(), "Order creation failed");
+    }
+
 
     @Test
     public void encryptUserPasswords() {

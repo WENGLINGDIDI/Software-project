@@ -9,4 +9,6 @@ public interface IScooterService {
     Scooter addScooter(addScooterDto scooter);
     Scooter editScooter(editScooterDto scooter);
     List<Scooter> getAllScooters();
+
+    Scooter deleteScooter(Integer id);
 }

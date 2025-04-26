@@ -13,7 +13,7 @@ public class CorsConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://192.168.217.131:8080","http://192.168.217.165:8080", "http://localhost:8080")); // 允许前端地址
+        config.setAllowedOrigins(Arrays.asList("http://localhost:5174","http://localhost:5173", "http://192.168.217.131:8080","http://192.168.217.165:8080", "http://localhost:8080")); // 允许前端地址
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 允许的请求方法
         config.setAllowedHeaders(Arrays.asList("*")); // 允许的请求头
         config.setAllowCredentials(true); // 允许携带 Cookie
