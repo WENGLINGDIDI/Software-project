@@ -3,27 +3,26 @@
     <!-- 顶部状态栏 -->
     <view class="status-bar">
       <view class="center">
-        <text class="center-text">哈啰</text>
+        <text class="center-text">蓉城出行</text>
       </view>
-
     </view>
 
     <!-- 返回按钮 -->
-    <view class="back-btn" @tap="handleBack">
+    <view class="back-btn" @tap="goBack">
       <text class="iconfont icon-back">×</text>
     </view>
 
     <!-- 用户信息区域 -->
     <view class="user-info">
-      <image class="avatar" src="/static/images/default-avatar.png" mode="aspectFill"></image>
+      <image class="avatar" src="/static/images/husky-avatar.png" mode="aspectFill"></image>
       <text class="title">账号登录</text>
     </view>
 
     <!-- 登录表单 -->
     <view class="login-form">
       <!-- 添加消息提示 -->
-      <view v-if="message" :class="['message', messageClass]">
-        {{message}}
+      <view v-if="msg" :class="['message', msgType]">
+        {{msg}}
       </view>
 
       <view class="input-group">
@@ -36,24 +35,24 @@
       </view>
       <view class="input-group">
         <input 
-          :type="showPassword ? 'text' : 'password'" 
+          :type="showPwd ? 'text' : 'password'" 
           v-model="password" 
           placeholder="请输入密码"
           class="input-item"
         />
         <text 
           class="toggle-password" 
-          @tap="togglePasswordVisibility"
-        >{{showPassword ? '隐藏' : '显示'}}</text>
+          @tap="togglePwd"
+        >{{showPwd ? '隐藏' : '显示'}}</text>
       </view>
 
       <!-- 隐私政策 -->
       <view class="privacy-policy">
-        <checkbox-group @change="handlePrivacyChange">
-          <checkbox :checked="agreePrivacy" color="#1890ff" />
+        <checkbox-group @change="onAgreeChange">
+          <checkbox :checked="isAgree" color="#1890ff" />
         </checkbox-group>
         <text class="policy-text">我已阅读并同意</text>
-        <text class="policy-link" @tap="handlePrivacyClick">《法律条款及隐私政策》</text>
+        <text class="policy-link" @tap="goPrivacy">《法律条款及隐私政策》</text>
       </view>
 
       <!-- 登录按钮 -->
@@ -61,28 +60,28 @@
         class="login-btn" 
         :class="{'login-btn-active': canLogin}"
         :disabled="!canLogin"
-        @tap="handleLogin"
+        @tap="doLogin"
       >登录该账号</button>
 
       <!-- 注册按钮 -->
       <button 
         class="register-btn"
-        @tap="handleRegister"
+        @tap="goRegister"
       >注册新账号</button>
 
       <!-- 登录遇到问题 -->
       <view class="login-help">
-        <text @tap="handleLoginIssue">登录遇到问题</text>
+        <text @tap="goHelp">登录遇到问题</text>
       </view>
 
       <!-- 其他登录方式 -->
       <view class="other-login">
         <text class="other-title">其他登录方式</text>
         <view class="login-methods">
-          <view class="method-item" @tap="handleOtherLogin('alipay')">
+          <view class="method-item" @tap="otherLogin('alipay')">
             <image src="/static/icons/alipay.png" mode="aspectFit"></image>
           </view>
-          <view class="method-item" @tap="handleOtherLogin('apple')">
+          <view class="method-item" @tap="otherLogin('apple')">
             <image src="/static/icons/apple.png" mode="aspectFit"></image>
           </view>
         </view>
@@ -94,105 +93,109 @@
 <script setup>
 import { ref, computed } from 'vue'
 import axios from 'axios'
+import { API_BASE_URL } from '@/config/index'
 
-const email = ref('')
-const password = ref('')
-const showPassword = ref(false)
-const agreePrivacy = ref(false)
-const message = ref('')
-const messageClass = ref('')
+// 基础数据
+const email = ref('1550320492@qq.com')
+const password = ref('123456')
+const showPwd = ref(false)
+const isAgree = ref(false)
+const msg = ref('')
+const msgType = ref('')
 
-// 计算是否可以登录
+// 是否可以登录
 const canLogin = computed(() => {
-  return email.value && 
-         password.value.length >= 6 && 
-         agreePrivacy.value
+  return email.value && password.value.length >= 6 && isAgree.value
 })
 
-// 切换密码显示
-const togglePasswordVisibility = () => {
-  showPassword.value = !showPassword.value
+// 显示/隐藏密码
+const togglePwd = () => {
+  showPwd.value = !showPwd.value
 }
 
-// 处理隐私政策变更
-const handlePrivacyChange = (e) => {
-  agreePrivacy.value = e.detail.value.length > 0
+// 同意协议
+const onAgreeChange = (e) => {
+  isAgree.value = e.detail.value.length > 0
 }
 
-// 处理返回
-const handleBack = () => {
+// 返回上一页
+const goBack = () => {
   uni.navigateBack()
 }
 
-// 处理登录
-const handleLogin = async () => {
+// 登录
+const doLogin = async () => {
   if (!canLogin.value) return
-
+  
   if (!email.value || !password.value) {
-    message.value = "请输入邮箱和密码"
-    messageClass.value = "error"
+    showMsg('请填写邮箱和密码', 'error')
     return
   }
 
   try {
-    console.log("开始登录请求...")
-    const response = await axios.post('https://192.168.126.147:8088/user/login', {
+    const res = await axios.post(`${API_BASE_URL}/user/login`, {
       email: email.value,
       password: password.value,
-      role: "user"
-    }, {
-      headers: { "Content-Type": "application/json" }
+      role: 'user'
     })
-
-    console.log('登录响应:', response)
-
-    if (response.data.statusCode === 200) {
-      message.value = "登录成功！"
-      messageClass.value = "success"
+	console.log(res);
+    if (res.data.statusCode === 200) {
       // 存储用户信息
-      uni.setStorageSync('user', JSON.stringify(response.data.data))
-      // 登录成功后跳转
+      const userData = {
+        id: res.data.data.id,
+        name: res.data.data.name,
+        email: res.data.data.email,
+        card: res.data.data.card,
+        createTime: res.data.data.createTime,
+        discount: res.data.data.discount,
+        role: res.data.data.role
+      }
+      
+      // 存入本地
+      uni.setStorageSync('userInfo', JSON.stringify(userData))
+      
+      showMsg('登录成功', 'success')
+      
+      // 延迟跳转
       setTimeout(() => {
-        uni.switchTab({
+        uni.switchTab({ 
           url: '/pages/index/index'
         })
-      }, 1500)
+      }, 1000)
     } else {
-      message.value = "用户名或密码错误"
-      messageClass.value = "error"
+      showMsg('账号或密码错误', 'error')
     }
-  } catch (error) {
-    console.error('登录错误:', error)
-    message.value = "登录请求失败，请检查网络"
-    messageClass.value = "error"
+  } catch (err) {
+    console.error('登录失败:', err)
+    showMsg('网络错误，请重试', 'error')
   }
 }
 
-// 处理注册
-const handleRegister = () => {
-  uni.navigateTo({
-    url: '/pages/register/register'
-  })
+// 显示消息
+const showMsg = (text, type) => {
+  msg.value = text
+  msgType.value = type
 }
 
-// 处理隐私政策点击
-const handlePrivacyClick = () => {
-  uni.navigateTo({
-    url: '/pages/privacy/privacy'
-  })
+// 去注册
+const goRegister = () => {
+  uni.navigateTo({ url: '/pages/register/register' })
 }
 
-// 处理登录问题
-const handleLoginIssue = () => {
-  uni.navigateTo({
-    url: '/pages/login-help/login-help'
-  })
+// 查看协议
+const goPrivacy = () => {
+  uni.navigateTo({ url: '/pages/privacy/privacy' })
 }
 
-// 处理其他登录方式
-const handleOtherLogin = (type) => {
+// 遇到问题
+const goHelp = () => {
+  uni.navigateTo({ url: '/pages/login-help/login-help' })
+}
+
+// 第三方登录
+const otherLogin = (type) => {
   uni.showToast({
-    title: `选择了${type}登录`,
+    title: `${type}登录`,
     icon: 'none'
   })
 }
@@ -384,121 +387,103 @@ page {
   font-weight: 500;
 }
 
+/* 按钮样式 */
 .login-btn {
   width: 100%;
-  height: 96rpx;
-  background: linear-gradient(120deg, #cccccc, #d9d9d9);
-  color: #ffffff;
-  border-radius: 48rpx;
+  height: 100rpx;
+  background: linear-gradient(45deg, #1890ff, #36b4ff);
+  border-radius: 50rpx;
+  color: #fff;
   font-size: 32rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 24rpx;
-  border: none;
-  transition: all 0.3s ease;
-  letter-spacing: 2rpx;
-  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  margin-top: 60rpx;
+  opacity: 0.6;
+  transition: all 0.3s;
 }
 
 .login-btn-active {
-  background: linear-gradient(120deg, #1890ff, #36cfc9);
-  box-shadow: 0 6rpx 16rpx rgba(24, 144, 255, 0.3);
-  transform: translateY(-2rpx);
+  opacity: 1;
+  box-shadow: 0 8rpx 24rpx rgba(24,144,255,0.3);
+}
+
+.login-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 4rpx 12rpx rgba(24,144,255,0.2);
 }
 
 .register-btn {
   width: 100%;
-  height: 96rpx;
-  background: #ffffff;
-  border-radius: 48rpx;
-  font-size: 32rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 24rpx;
-  border: 2rpx solid transparent;
-  background-image: linear-gradient(#fff, #fff), linear-gradient(120deg, #1890ff, #36cfc9);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-  transition: all 0.3s ease;
+  height: 100rpx;
+  background: transparent;
+  border: 2rpx solid #1890ff;
+  border-radius: 50rpx;
   color: #1890ff;
-  letter-spacing: 2rpx;
+  font-size: 32rpx;
+  margin-top: 30rpx;
+  transition: all 0.3s;
 }
 
 .register-btn:active {
+  background: rgba(24,144,255,0.05);
   transform: scale(0.98);
 }
 
+/* 登录帮助 */
 .login-help {
   text-align: center;
-  font-size: 28rpx;
-  color: #666;
-  margin: 32rpx 0;
-  text-decoration: underline;
-  text-underline-offset: 4rpx;
-  text-decoration-color: #ccc;
+  margin-top: 40rpx;
 }
 
+.login-help text {
+  font-size: 26rpx;
+  color: #666;
+  text-decoration: underline;
+}
+
+/* 其他登录方式 */
 .other-login {
   margin-top: 80rpx;
-  padding: 0 60rpx;
+  text-align: center;
 }
 
 .other-title {
-  text-align: center;
-  font-size: 26rpx;
+  font-size: 28rpx;
   color: #999;
   margin-bottom: 40rpx;
-  position: relative;
-}
-
-.other-title::before,
-.other-title::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  width: 120rpx;
-  height: 2rpx;
-  background: linear-gradient(90deg, transparent, #e8e8e8);
-}
-
-.other-title::before {
-  left: 25%;
-  transform: translateX(-50%);
-}
-
-.other-title::after {
-  right: 25%;
-  transform: translateX(50%);
-  background: linear-gradient(90deg, #e8e8e8, transparent);
+  display: block;
 }
 
 .login-methods {
   display: flex;
   justify-content: center;
-  gap: 80rpx;
+  gap: 60rpx;
 }
 
 .method-item {
   width: 100rpx;
   height: 100rpx;
-  border-radius: 50rpx;
-  background: #ffffff;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  transition: all 0.3s;
+}
+
+.method-item:first-child {
+  background-color: #1677ff;
+}
+
+.method-item:last-child {
+  background-color: #000000;
 }
 
 .method-item:active {
   transform: scale(0.95);
-  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.05);
 }
 
 .method-item image {
-  width: 56rpx;
-  height: 56rpx;
+  width: 50rpx;
+  height: 50rpx;
+  object-fit: contain;
 }
 </style> 

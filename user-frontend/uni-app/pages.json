@@ -12,7 +12,56 @@
       "style": {
         "navigationStyle": "custom"
       }
-    }
+    },
+    {
+      "path": "pages/register/register",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/user/user",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+    	"path" : "pages/rent/rent",
+    	"style" : 
+    	{
+    		"navigationBarTitleText" : ""
+    	}
+    },
+    {
+    	"path" : "pages/pay/pay",
+    	"style" : 
+    	{
+    		"navigationBarTitleText" : ""
+    	}
+    },
+    {
+    	"path" : "pages/order/order",
+    	"style" : 
+    	{
+    		"navigationBarTitleText" : ""
+    	}
+    },
+
+	    {
+	      "path": "pages/order/detail",
+	      "style": {
+	        "navigationStyle": "custom"
+	      }
+	    
+	  
+	},
+	{
+		"path" : "pages/card/card",
+		"style" : 
+		{
+			"navigationBarTitleText" : ""
+		}
+	}
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",
@@ -29,21 +78,21 @@
       {
         "pagePath": "pages/index/index",
         "text": "租车",
-        "iconPath": "static/icons/home.png",
+        "iconPath": "static/icons/home-active.png",
         "selectedIconPath": "static/icons/home-active.png"
-      },
-      {
-        "pagePath": "pages/order/order",
-        "text": "订单",
-        "iconPath": "static/icons/order.png",
-        "selectedIconPath": "static/icons/order-active.png"
       },
       {
         "pagePath": "pages/user/user",
         "text": "我的",
-        "iconPath": "static/icons/user.png",
+        "iconPath": "static/icons/user-active.png",
         "selectedIconPath": "static/icons/user-active.png"
       }
     ]
-  }
-}
+  },
+  "easycom": {
+      "autoscan": true,
+      "custom": {
+        "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+      }
+    }
+} 

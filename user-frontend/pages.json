@@ -12,6 +12,18 @@
       "style": {
         "navigationStyle": "custom"
       }
+    },
+    {
+      "path": "pages/register/register",
+      "style": {
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/user/user",
+      "style": {
+        "navigationStyle": "custom"
+      }
     }
   ],
   "globalStyle": {
@@ -31,12 +43,6 @@
         "text": "租车",
         "iconPath": "static/icons/home.png",
         "selectedIconPath": "static/icons/home-active.png"
-      },
-      {
-        "pagePath": "pages/order/order",
-        "text": "订单",
-        "iconPath": "static/icons/order.png",
-        "selectedIconPath": "static/icons/order-active.png"
       },
       {
         "pagePath": "pages/user/user",
