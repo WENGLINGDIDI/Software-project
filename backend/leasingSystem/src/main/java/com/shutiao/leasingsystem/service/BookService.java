@@ -80,7 +80,7 @@ public class BookService implements IBookService {
 
         book.setPayed(0);
         Book savedBook = bookRepository.save(book);
-        emailService.sendEmail(user.getEmail(), "confirm", savedBook.toString());
+        // emailService.sendEmail(user.getEmail(), "confirm", savedBook.toString());
 
         return savedBook;
     }
@@ -146,6 +146,21 @@ public class BookService implements IBookService {
     public List<Book> getAllBook() {
         return bookRepository.findAll();
     }
+
+    @Override
+    public Book getBookById(Integer bookId) {
+        return bookRepository.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("订单未找到"));
+    }
+
+    @Override
+    public Book payBook(Integer bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new RuntimeException("订单未找到"));
+        book.setPayed(1);
+        return bookRepository.save(book);
+    }
+
 
     @Scheduled(fixedRate = 600000) // 每分钟执行一次，可以根据需要调整
     public void updateUnpaidBookStatus() {

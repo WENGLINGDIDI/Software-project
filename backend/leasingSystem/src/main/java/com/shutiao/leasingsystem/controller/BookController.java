@@ -30,7 +30,11 @@ public class BookController {
         List<Book> books = bookService.getBooksByUserId(userId);
         return ResponseMessage.success(books);
     }
-
+    @GetMapping("/user/book/id/{bookId}")
+    public ResponseMessage<Book> getBookById(@PathVariable Integer bookId) {
+        Book book = bookService.getBookById(bookId);
+        return ResponseMessage.success(book);
+    }
     // 取消订单
     @DeleteMapping("/user/book/cancel/{bookId}")
     public ResponseMessage<Book> cancelBook(@PathVariable Integer bookId) {
@@ -50,6 +54,13 @@ public class BookController {
     public ResponseMessage<Book> completeBook(@RequestBody completeBookDto dto) {
         Book completedBook = bookService.completeBook(dto);
         return ResponseMessage.success(completedBook);
+    }
+
+    // 支付订单
+    @PostMapping("/user/book/pay/{bookId}")
+    public ResponseMessage<Book> payBook(@PathVariable Integer bookId) {
+        Book payedBook = bookService.payBook(bookId);
+        return ResponseMessage.success(payedBook);
     }
 
     // 延长订单

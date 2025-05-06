@@ -15,4 +15,8 @@ public interface IBookService {
     Book completeBook(completeBookDto dto);
 
     List<Book> getAllBook();
+
+    Book getBookById(Integer bookId);
+
+    Book payBook(Integer bookId);
 }

@@ -23,7 +23,11 @@ public class AdminController {
         Map<Integer, Double> revenueMap = adminService.getRevenueForThisWeek();
         return ResponseMessage.success(revenueMap);  // 返回结果
     }
-
+    @GetMapping("/year")
+    public ResponseMessage<Map<Integer, Map<Integer, Double>>> getRevenueForThisYear() {
+        Map<Integer, Map<Integer, Double>> revenueMap = adminService.getRevenueForThisYear();
+        return ResponseMessage.success(revenueMap);  // 返回结果
+    }
     // 获取所有用户
     @GetMapping("/user")
     public ResponseMessage<List<User>> getAllUsers() {

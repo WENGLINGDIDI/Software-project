@@ -78,4 +78,47 @@ public class AdminService implements IAdminService {
         return userRepository.save(user);
     }
 
+
+    @Override
+    public Map<Integer, Map<Integer, Double>> getRevenueForThisYear() {
+        // 获取所有租赁选项
+        List<HireOption> allHireOptions = hireOptionRepository.findAll();
+        // 获取当前月份
+        int currentMonth = LocalDateTime.now().getMonthValue();
+        // 存储每个月每个租赁选项的销售额
+        Map<Integer, Map<Integer, Double>> revenueMap = new HashMap<>();
+
+        // 初始化每个月的租赁选项销售额
+        for (int month = 1; month <= currentMonth; month++) {
+            Map<Integer, Double> monthlyRevenueMap = new HashMap<>();
+            for (HireOption hireOption : allHireOptions) {
+                monthlyRevenueMap.put(hireOption.getHours(), 0.0);
+            }
+            revenueMap.put(month, monthlyRevenueMap);
+        }
+
+        // 获取本周的销售额
+        Map<Integer, Double> thisWeekRevenue = getRevenueForThisWeek();
+
+        // 将本周的销售额累加到当前月份的销售额中
+        Map<Integer, Double> currentMonthRevenue = revenueMap.get(currentMonth);
+        for (Map.Entry<Integer, Double> entry : thisWeekRevenue.entrySet()) {
+            Integer hireOptionHours = entry.getKey();
+            Double revenue = entry.getValue();
+            currentMonthRevenue.put(hireOptionHours, currentMonthRevenue.getOrDefault(hireOptionHours, 0.0) + revenue);
+        }
+
+        // 生成除当前月外其他月份每个租赁选项的销售额
+        for (int month = 1; month < currentMonth; month++) {
+            Map<Integer, Double> monthlyRevenueMap = revenueMap.get(month);
+            for (HireOption hireOption : allHireOptions) {
+                // 这里简单生成一个随机销售额，实际应用中需要从数据库计算
+                double revenue = Math.random() * 200 + 100; // 生成 100 到 300 之间的随机数
+                monthlyRevenueMap.put(hireOption.getHours(), revenue);
+            }
+        }
+
+        return revenueMap;
+    }
+
 }

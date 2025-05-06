@@ -14,4 +14,5 @@ public interface IAdminService {
     List<User> getAllUsers();
     User editDiscountDto(editDiscountDto dto);
 
+    Map<Integer, Map<Integer, Double>> getRevenueForThisYear();
 }

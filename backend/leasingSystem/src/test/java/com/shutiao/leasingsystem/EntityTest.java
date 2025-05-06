@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -79,18 +80,18 @@ public class EntityTest {
 
         double centerLat = 30.657; // 成都天府广场纬度
         double centerLng = 104.065; // 成都天府广场经度
-        double radius = 0.02; // 设定一个小范围半径（大约2公里内）
+        double radius = 0.05; // 设定一个小范围半径（大约2公里内）
 
         // 获取所有站点
         List<Station> stations = stationRepository.findAll();
 
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= 10; i++) {
             Scooter scooter = new Scooter();
             scooter.setLatitude(centerLat + (random.nextDouble() * radius - radius / 2));
             scooter.setLongitude(centerLng + (random.nextDouble() * radius - radius / 2));
             scooter.setStatus(0); // 0=可用, 1=不可用, 2=维修中
             scooter.setPower(random.nextInt(101)); // 0~100 随机电量
-            scooter.setConfig("Speed: 30 km/h, 包含头盔与手机支架"); // 速度 5~30km/h
+            scooter.setConfig("Speed: 30 km/h, Includes helmet and phone holder"); // 速度 5~30km/h
 
             // 随机选择一个站点
             if (!stations.isEmpty()) {
@@ -119,11 +120,11 @@ public class EntityTest {
 
     @Test
     public void generateTestBookings() {
-        Integer[] user_ids = {1, 4, 6};
-        Integer[] scooter_ids = {1, 2, 3};
-        Integer[] hire_ids = {1, 1, 3};
+        Integer[] user_ids = {15, 16, 17, 1};
+        Integer[] scooter_ids = {17, 18, 19, 16};
+        Integer[] hire_ids = {1, 3, 5, 6};
 
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 4; i++){
             final int index = i;  // 将 i 赋值给一个 final 变量
             User user = userRepository.findById(user_ids[index])
                     .orElseThrow(() -> new RuntimeException("User not found: " + user_ids[index]));
@@ -166,7 +167,7 @@ public class EntityTest {
         feedback.setBook(book);              // 设置关联的预订记录
         feedback.setPriority(1);             // 设置反馈优先级
         feedback.setMessage("这是一个测试反馈，系统运行正常。");
-        feedback.setStatus("new");           // 设置反馈状态（例如 new、resolved 等）
+        feedback.setStatus("未处理");           // 设置反馈状态（例如 new、resolved 等）
 
         // 保存反馈记录到数据库
         feedbackRepository.save(feedback);
@@ -222,7 +223,7 @@ public class EntityTest {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         // 查找 id 为 10 的用户
-        User user = userRepository.findById(10).orElseThrow(() ->
+        User user = userRepository.findById(21).orElseThrow(() ->
                 new RuntimeException("用户不存在，id: 10")
         );
 
@@ -296,6 +297,54 @@ public class EntityTest {
 
             // 保存更新后的用户信息
             userRepository.save(user);
+        }
+    }
+
+
+    @Test
+    public void generate10RecentBookingsByHireOptionId() {
+        // 假设我们有一个租赁选项 ID
+        Integer hireOptionId = 1;
+
+        // 获取指定 ID 的租赁选项
+        HireOption hireOption = hireOptionRepository.findById(hireOptionId)
+                .orElseThrow(() -> new RuntimeException("HireOption not found with id: " + hireOptionId));
+
+        // 获取所有用户
+        List<User> allUsers = userRepository.findAll();
+        // 获取所有可用的滑板车
+        List<Scooter> availableScooters = scooterRepository.findAll().stream()
+                .filter(s -> s.getStatus() == 0)
+                .collect(Collectors.toList());
+
+        Random random = new Random();
+
+        for (int i = 0; i < 10; i++) {
+            // 随机选择一个用户
+            User user = allUsers.get(random.nextInt(allUsers.size()));
+            // 随机选择一个可用的滑板车
+            Scooter scooter = availableScooters.get(random.nextInt(availableScooters.size()));
+
+            // 设置订单的开始和结束时间，这里假设起始时间为当前时间减去 i 小时
+            LocalDateTime startTime = LocalDateTime.now().minusHours(i);
+            LocalDateTime endTime = startTime.plusHours(hireOption.getHours());
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+            String startTimeStr = startTime.format(formatter);
+            String endTimeStr = endTime.format(formatter);
+
+            // 创建 addBookDto 对象
+            addBookDto bookDto = new addBookDto();
+            bookDto.setUserId(user.getId());
+            bookDto.setScooterId(scooter.getId());
+            bookDto.setHireOptionId(hireOption.getId());
+            bookDto.setStartTime(startTimeStr);
+            bookDto.setEndTime(endTimeStr);
+
+            // 调用服务层的方法下订单
+            Book newBook = bookService.addBook(bookDto);
+
+            // 验证订单是否成功创建
+            assertNotNull(newBook.getId(), "Order creation failed");
         }
     }
 }
