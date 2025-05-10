@@ -80,7 +80,7 @@ public class BookService implements IBookService {
 
         book.setPayed(0);
         Book savedBook = bookRepository.save(book);
-        // emailService.sendEmail(user.getEmail(), "confirm", savedBook.toString());
+        emailService.sendEmail(user.getEmail(), "confirm", savedBook.toString());
 
         return savedBook;
     }
@@ -158,7 +158,14 @@ public class BookService implements IBookService {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new RuntimeException("订单未找到"));
         book.setPayed(1);
+        book.setStatus(3);
         return bookRepository.save(book);
+    }
+
+    @Override
+    public List<Book> snedEmail() {
+        emailService.sendEmail("1550320492@qq.com", "confirm", "book confirmed");
+        return null;
     }
 
 

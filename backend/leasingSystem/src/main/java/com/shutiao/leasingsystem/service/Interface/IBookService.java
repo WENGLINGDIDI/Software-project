@@ -19,4 +19,6 @@ public interface IBookService {
     Book getBookById(Integer bookId);
 
     Book payBook(Integer bookId);
+
+    List<Book> snedEmail();
 }

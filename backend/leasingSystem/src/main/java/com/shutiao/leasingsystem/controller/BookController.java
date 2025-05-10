@@ -69,4 +69,10 @@ public class BookController {
         List<Book> allBooks = bookService.getAllBook();
         return ResponseMessage.success(allBooks);
     }
+
+    @GetMapping("/admin/email")
+    public ResponseMessage<String> snedEmail() {
+        bookService.snedEmail();
+        return ResponseMessage.success("email send successfully");
+    }
 }

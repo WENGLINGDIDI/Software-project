@@ -43,12 +43,6 @@ public class EntityTest {
     @Autowired
     private IBookService bookService;
 
-//    @BeforeEach
-//    public void setup() {
-//        // 清空数据库中的所有用户
-//        userRepository.deleteAll();
-//    }
-
     @Test
     public void generateTestUsers() {
         // 生成 20 个用户
@@ -120,8 +114,8 @@ public class EntityTest {
 
     @Test
     public void generateTestBookings() {
-        Integer[] user_ids = {15, 16, 17, 1};
-        Integer[] scooter_ids = {17, 18, 19, 16};
+        Integer[] user_ids = {1,2,3,4,5};
+        Integer[] scooter_ids = {1,2,3,4};
         Integer[] hire_ids = {1, 3, 5, 6};
 
         for (int i = 0; i < 4; i++){
@@ -186,7 +180,7 @@ public class EntityTest {
     }
 
     @Test
-    public void emailTest(){
+    public void emailTest1(){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo("1550320492@qq.com");
         message.setSubject("test");
@@ -194,6 +188,11 @@ public class EntityTest {
         message.setFrom("1550320492@qq.com");
         javaMailSender.send(message);
         System.out.println("发送邮件");
+    }
+
+    @Test
+    public void emailTest2(){
+        bookService.snedEmail();
     }
 
     @Test
@@ -274,7 +273,17 @@ public class EntityTest {
         // 验证订单是否成功创建
         assertNotNull(newBook.getId(), "Order creation failed");
     }
-
+    @Test
+    public void changePasswords(){
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        User user = userRepository.findById(10)
+                .orElseThrow(() -> new RuntimeException("User not found with id: 10"));
+        String originalPassword = "123456";
+        String encryptedPassword = passwordEncoder.encode(originalPassword);
+        user.setPassword(encryptedPassword);
+        // 保存更新后的用户信息
+        userRepository.save(user);
+    }
 
     @Test
     public void encryptUserPasswords() {
@@ -345,6 +354,25 @@ public class EntityTest {
 
             // 验证订单是否成功创建
             assertNotNull(newBook.getId(), "Order creation failed");
+        }
+    }
+    @Test
+    public void updateUnpaidBookStatus() {
+        List<Book> unpaidBooks = bookRepository.findByPayed(0); // 获取所有未支付的订单
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Book book : unpaidBooks) {
+            if (now.isBefore(book.getStartTime())) {
+                // 预定状态
+                book.setStatus(1);
+            } else if (now.isAfter(book.getStartTime()) && now.isBefore(book.getEndTime())) {
+                // 激活状态
+                book.setStatus(2);
+            } else {
+                // 完成状态
+                book.setStatus(3);
+            }
+            bookRepository.save(book); // 保存更新后的订单状态
         }
     }
 }

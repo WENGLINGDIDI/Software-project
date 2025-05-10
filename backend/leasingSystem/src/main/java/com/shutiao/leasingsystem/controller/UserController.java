@@ -5,11 +5,14 @@ import com.shutiao.leasingsystem.pojo.ResponseMessage;
 import com.shutiao.leasingsystem.pojo.dto.*;
 import com.shutiao.leasingsystem.pojo.entity.*;
 import com.shutiao.leasingsystem.service.Interface.IUserService;
+import com.shutiao.leasingsystem.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -26,9 +29,13 @@ public class UserController {
 
     //登录
     @PostMapping("/login")
-    public ResponseMessage<User> login(@RequestBody loginDto user){
+    public ResponseMessage<Map<String, Object>> login(@RequestBody loginDto user) {
         User exist_user = userService.login(user);
-        return ResponseMessage.success(exist_user);
+        String token = JwtUtil.generateToken(exist_user.getName());
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("user", exist_user);
+        resultMap.put("token", token);
+        return ResponseMessage.success(resultMap);
     }
 
     //获取用户byId
