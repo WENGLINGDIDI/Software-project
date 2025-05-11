@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@amap/amap-jsapi-loader": "^1.0.1",
-    "@dcloudio/uni-ui": "^1.5.7",
-    "axios": "^1.8.4"
-  }
-}

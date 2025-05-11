@@ -1,1 +1,0 @@
-export const BASE_URL = "https://192.168.126.231"; // 替换为你的后端地址

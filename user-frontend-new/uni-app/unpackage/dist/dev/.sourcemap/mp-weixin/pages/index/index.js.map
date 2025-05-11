@@ -1,1 +1,0 @@
-{"version":3,"file":"index.js","sources":["../../../../HBuilderX/plugins/uniapp-cli-vite/uniPage:/cGFnZXMvaW5kZXgvaW5kZXgudnVl"],"sourcesContent":["import MiniProgramPage from 'C:/Users/zyh/Desktop/软工项目/Software-project/user-frontend/uni-app/pages/index/index.vue'\nwx.createPage(MiniProgramPage)"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;;;;;AACA,GAAG,WAAW,eAAe;"}
