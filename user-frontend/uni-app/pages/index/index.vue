@@ -58,7 +58,7 @@
     </view>
 
     <!-- 底部导航栏 -->
-    <view class="tab-bar">
+  <!--  <view class="tab-bar">
       <view class="tab-item">
         <view class="icon">
           <text class="iconfont icon-home"></text>
@@ -71,7 +71,7 @@
         </view>
         <text>My</text>
       </view>
-    </view>
+    </view> -->
   </view>
 </template>
 

@@ -7,7 +7,7 @@ import { onLoad } from '@dcloudio/uni-app'
 const tabs = [
   { type: 'all', name: 'All' },
   { type: 'unpaid', name: 'Unpaid' },
-  { type: 'notstarted', name: 'Not Started' },
+  { type: 'notstarted', name: 'Pending' },
   { type: 'ongoing', name: 'Ongoing' },
   { type: 'completed', name: 'Completed' }
 ]
@@ -197,7 +197,7 @@ const switchTab = (type) => {
 const getStatusText = (status, paid) => {
   const statusMap = {
     0: 'Unpaid',
-    1: 'Not Started',
+    1: 'Pending',
     2: 'Ongoing',
     3: 'Completed',
     4: 'Cancelled'
