@@ -14,10 +14,15 @@ const request = axios.create({
 // Request interceptor
 request.interceptors.request.use(
   config => {
-    // 自动加上token
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers['Authorization'] = 'Bearer ' + token
+    // Only add token if not login or register
+    if (
+      !config.url.endsWith('/user/login') &&
+      !config.url.endsWith('/user/register')
+    ) {
+      const token = localStorage.getItem('token')
+      if (token) {
+        config.headers['Authorization'] = 'Bearer ' + token
+      }
     }
     console.log('Sending request:', {
       url: config.url,

@@ -853,8 +853,8 @@ export default {
         if (response.statusCode === 200) {
           this.$message.success('Modified successfully')
           this.editDialogVisible = false
-          // Refresh data after successful edit
-          await this.fetchScooterData()
+          // Refresh the whole page after successful edit
+          window.location.reload()
         } else {
           throw new Error(response.message || 'Modification failed')
         }
